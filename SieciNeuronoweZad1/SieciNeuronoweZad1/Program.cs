@@ -8,47 +8,76 @@ namespace SieciNeuronoweZad1
 {
     class Program
     {
+        private const int MAX_ITERATIONS = 10000;
+        private static int experiment_number = 1;
+
         static void Main(string[] args)
         {
             Random generator = new Random();
             Perceptron.setGenerator(generator);
 
-            teachPerceptron(0.01, 1.0, false, false);
-            teachPerceptron(0.05, 1.0, false, false);
-            teachPerceptron(0.10, 1.0, false, false);
+            teachPerceptron("AND", new PerceptronSettings(0.01, 1.0, false, true));
+            teachPerceptron("OR", new PerceptronSettings(0.01, 1.0, false, true));
         }
 
-        static void teachPerceptron(double alpha, double weight_range, bool is_bipolar, bool is_biased)
+        static void teachPerceptron(string problem_name, PerceptronSettings settings)
         {
-            string final_text = "Alpha: [" + alpha + "]\n";
-            final_text += "Zakres wag początkowych: [-" + weight_range + ", "+weight_range+"]\n";
+            string final_text = string.Format("EKSPERYMENT [{0}]\n\n", experiment_number);
+            final_text += string.Format("Nazwa danych: [{0}]\n", problem_name);
+            final_text += settings.dumpSettingsString();
 
-            Perceptron perceptron = new Perceptron(alpha, weight_range, is_bipolar, is_biased);
-            final_text += "Wektor wag początkowych: " + perceptron.getWeightsString() + "\n";
+            List<Entry> dataset = DataSets.getTrainingDataset(problem_name, settings.is_bipolar);
 
-            int max_iterations = 10000;
-            int iterations = 0;
-            double error = 1;
-            bool success = true;
-
-            while (error != 0)
+            if (dataset.Count>0)
             {
-                iterations++;
-                error = 0;
-                error += perceptron.iteration(new double[] {0, 0}, 0);
-                error += perceptron.iteration(new double[] {0, 1}, 0);
-                error += perceptron.iteration(new double[] {1, 0}, 0);
-                error += perceptron.iteration(new double[] {1, 1}, 1);
+                settings.setVectorLen(dataset[0].vector_length);
 
-                if (iterations > max_iterations)
+                Perceptron perceptron = new Perceptron(settings);
+
+                final_text += string.Format("Wektor wag początkowych: {0}\n\n", perceptron.getWeightsString());
+
+                int iterations = 0;
+
+                bool run_loop = true;
+
+                while (run_loop)
                 {
-                    error = 0;
-                    success = false;
+                    double error = 0;
+
+                    foreach (Entry entry in dataset)
+                        error += Math.Pow(perceptron.iteration(entry), 2);
+
+                    if ((error == 0)||(iterations > MAX_ITERATIONS))
+                    {
+                        run_loop = false;
+                    }
+    
+                    iterations++;
+                }
+
+                if (iterations <= MAX_ITERATIONS)
+                {
+                    final_text += string.Format("Wyuczono w: [{0}] iteracji\nWektor wag ostatecznych: {1}\n\n", iterations, perceptron.getWeightsString());
+                    List<Entry> test_dataset = DataSets.getTestingDataset(problem_name, settings.is_bipolar);
+                    if (test_dataset.Count>0)
+                    {
+                        final_text += "Testy:\n";
+                        foreach (Entry entry in test_dataset)
+                            final_text += entry.dumpEntryString() + string.Format("Input otrzymany: [{0}]\n", perceptron.predictY(entry));
+                    }
+                }
+                else
+                {
+                    final_text += "Nie wyuczono\n\n";
                 }
             }
+            else
+            {
+                final_text += string.Format("Nie ma danych o nazwie[{0}]\n\n", problem_name); ;
+            }
 
-            final_text += success ? "Wyuczono w: [" + iterations + "] iteracji\nWektor wag ostatecznych: "+perceptron.getWeightsString() : "Nie wyuczono";
-            final_text += "\n\n";
+            experiment_number++;
+
             Console.WriteLine(final_text);
             Console.ReadKey();
         }

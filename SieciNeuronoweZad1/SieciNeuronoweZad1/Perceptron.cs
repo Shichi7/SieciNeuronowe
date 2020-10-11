@@ -10,84 +10,71 @@ namespace SieciNeuronoweZad1
     {
         private static Random generator;
 
-        private bool is_bipolar; //else unipolar
-        private bool is_biased;
+        private PerceptronSettings settings;
 
-        private int vector_length;
+        private List<double> w_vector;
+        private List<double> x_vector;
 
-        private double threshold;
-        private double modifier;
-
-        private double[] x_vector;
-        private double[] w_vector;
-
-        public Perceptron(double modifier, double random_weight_range = 1.0, bool is_bipolar = false, bool is_biased = false)
+        public Perceptron(PerceptronSettings settings)
         {
-            this.modifier = modifier;
-            this.is_bipolar = is_bipolar;
-            this.is_biased = is_biased;
+            this.settings = settings;
 
-            threshold = 0.5;
+            w_vector = new List<double>();
 
-            vector_length = is_biased ? 3 : 2;
-
-            x_vector = new double[vector_length];
-            w_vector = new double[vector_length];
-
-            if (is_biased)
-                x_vector[0] = 1;
-
-            for (int i = 0; i < vector_length; i++)
+            for (int i = 0; i < settings.vector_len; i++)
             {
                 bool minus = generator.Next(0, 2) == 0 ? true : false;
-                w_vector[i] = generator.NextDouble() * random_weight_range;
-                w_vector[i] = minus ? -w_vector[i] : w_vector[i];
+                double new_weight = generator.NextDouble() * settings.starting_weight_range;
+                new_weight = minus ? -new_weight : new_weight;
+                w_vector.Add(new_weight);
             }
         }
 
-        public double iteration(double[] x_vector, double y)
+        public double iteration(Entry entry)
         {
-            double temp_y = 0;
+            int predicted_y = predictY(entry);
 
-            for (int i = 0; i < vector_length; i++)
+            int error = entry.output - predicted_y;
+
+            for (int i = 0; i < settings.vector_len; i++)
             {
-                temp_y += w_vector[i] * x_vector[i];
-            }
-
-            double calculated_y = temp_y >= threshold ? 1.0 : 0.0;
-            double error = y - calculated_y;
-
-            for (int i = 0; i < vector_length; i++)
-            {
-                w_vector[i] = w_vector[i] + x_vector[i] * error * modifier;
+                w_vector[i] = w_vector[i] + x_vector[i] * error * settings.modifier;
             }
 
             return error;
         }
 
-        public double calculate(double[] x_vector)
+        public int predictY(Entry entry)
         {
-            double temp_y = 0;
+            double sum = 0;
 
-            for (int i = 0; i < vector_length; i++)
+            x_vector = new List<double>();
+
+            if (settings.is_biased)
+                x_vector.Add(1.0);
+
+            foreach (double input in entry.inputs)
             {
-                temp_y += w_vector[i] * x_vector[i];
+                x_vector.Add(input);
             }
 
-            return temp_y >= threshold ? 1.0 : 0.0;
+            for (int i = 0; i < settings.vector_len; i++)
+            {
+                sum += w_vector[i] * x_vector[i];
+            }
+
+            return (sum >= settings.threshold) ? settings.active_value : settings.inactive_value;
         }
 
         public string getWeightsString()
         {
             string weigths_string = "[";
-            for (int i = 0; i < vector_length; i++)
+            for (int i = 0; i < settings.vector_len; i++)
             {
                 weigths_string += w_vector[i] + ", ";
             }
 
-            //weigths_string = weigths_string.Substring(weigths_string.Length - 2);
-
-            weigths_string += "]";
+            weigths_string = weigths_string.Substring(0, weigths_string.Length - 2) + "]";
 
             return weigths_string;
         }
@@ -96,9 +83,5 @@ namespace SieciNeuronoweZad1
         {
             Perceptron.generator = generator;
         }
-
-
-
-
     }
 }
