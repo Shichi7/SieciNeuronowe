@@ -38,7 +38,8 @@ namespace SieciNeuronoweZad1
 
             for (int i = 0; i < settings.vector_len; i++)
             {
-                w_vector[i] = w_vector[i] + x_vector[i] * error * settings.modifier;
+                double modification = x_vector[i] * error * settings.modifier;
+                w_vector[i] = w_vector[i] + modification;
             }
 
             return error;

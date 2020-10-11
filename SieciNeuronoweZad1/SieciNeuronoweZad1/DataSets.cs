@@ -39,6 +39,7 @@ namespace SieciNeuronoweZad1
                 dataset.Add(new Entry(new List<double>() { 1, 0 }, 0, bipolar));
                 dataset.Add(new Entry(new List<double>() { 1, 1 }, 1, bipolar));
                 dataset.Add(new Entry(new List<double>() { 0.99, 0.99 }, 1, bipolar));
+                dataset.Add(new Entry(new List<double>() { 0.95, 0.96 }, 1, bipolar));
                 dataset.Add(new Entry(new List<double>() { 0.11, 0.91 }, 0, bipolar));
                 dataset.Add(new Entry(new List<double>() { 0.91, 0.07 }, 0, bipolar));
             }

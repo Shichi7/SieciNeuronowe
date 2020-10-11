@@ -8,7 +8,7 @@ namespace SieciNeuronoweZad1
 {
     class Program
     {
-        private const int MAX_ITERATIONS = 10000;
+        private const int MAX_ITERATIONS = 100000;
         private static int experiment_number = 1;
 
         static void Main(string[] args)
@@ -16,8 +16,8 @@ namespace SieciNeuronoweZad1
             Random generator = new Random();
             Perceptron.setGenerator(generator);
 
-            teachPerceptron("AND", new PerceptronSettings(0.01, 1.0, false, true));
-            teachPerceptron("OR", new PerceptronSettings(0.01, 1.0, false, true));
+            teachPerceptron("AND", new PerceptronSettings(0.01, 1.0, true, true));
+            teachPerceptron("OR", new PerceptronSettings(0.01, 1.0, true, true));
         }
 
         static void teachPerceptron(string problem_name, PerceptronSettings settings)
