@@ -15,11 +15,28 @@ namespace SieciNeuronoweZad1
         private List<double> w_vector;
         private List<double> x_vector;
 
-        public Perceptron(PerceptronSettings settings)
+        private List<Entry> training_dataset;
+
+        private string problem_name;
+
+        public string teaching_log;
+        public string testing_log;
+        public bool teaching_successfull;
+
+        public Perceptron(PerceptronSettings settings, string problem_name)
         {
+            teaching_successfull = false;
+
             this.settings = settings;
+            this.problem_name = problem_name;
 
             w_vector = new List<double>();
+
+            training_dataset = DataSets.getTrainingDataset(problem_name, settings.is_bipolar);
+            if (training_dataset.Count > 0)
+            {
+                this.settings.setVectorLen(training_dataset[0].inputs.Count);
+            }
 
             for (int i = 0; i < settings.vector_len; i++)
             {
@@ -30,11 +47,85 @@ namespace SieciNeuronoweZad1
             }
         }
 
-        public double iteration(Entry entry)
+        public void teach()
         {
-            int predicted_y = predictY(entry);
+            teaching_log = "";
+            teaching_log += string.Format("Nazwa danych: [{0}]\n", problem_name);
+            teaching_log += settings.dumpSettingsString();
 
-            int error = entry.output - predicted_y;
+            if (training_dataset.Count > 0)
+            {
+                teaching_log += string.Format("Wektor wag początkowych: {0}\n\n", getWeightsString());
+
+                int iterations = 0;
+
+                bool run_loop = true;
+
+                while (run_loop)
+                {
+                    double error = 0;
+
+                    foreach (Entry entry in training_dataset)
+                    {
+                        error += Math.Pow(iteration(entry), 2);
+                    }
+                    error /= training_dataset.Count;
+
+                    if ((error == 0) || (iterations > PerceptronSettings.MAX_ITERATIONS))
+                    {
+                        run_loop = false;
+                    }
+
+                    if ((settings.is_adaline)&&(error < PerceptronSettings.LMS_THRESHOLD))
+                    {
+                        teaching_log += string.Format("Ostateczny LMS: [{0}]\n", error);
+                        run_loop = false;
+                    }
+
+                    iterations++;
+                }
+
+                if (iterations <= PerceptronSettings.MAX_ITERATIONS)
+                {
+                    teaching_successfull = true;
+                    teaching_log += string.Format("Wyuczono w: [{0}] iteracji\nWektor wag ostatecznych: {1}\n\n", iterations, getWeightsString());
+                }
+                else
+                {
+                    teaching_successfull = false;
+                    teaching_log += "Nie wyuczono\n\n";
+                }
+            }
+            else
+            {
+                teaching_successfull = false;
+                teaching_log += string.Format("Nie ma danych o nazwie[{0}]\n\n", problem_name); ;
+            }
+        }
+
+        public void test()
+        {
+            testing_log = "";
+
+            List<Entry> test_dataset = DataSets.getTestingDataset(problem_name, settings.is_bipolar);
+            if (test_dataset.Count > 0)
+            {
+                testing_log += "Testy:\n";
+                foreach (Entry entry in test_dataset)
+                    testing_log += entry.dumpEntryString() + string.Format("Input otrzymany: [{0}]\n", predictY(entry));
+            }
+        }
+
+        private double iteration(Entry entry)
+        {
+            double predicted_y;
+
+            if (settings.is_adaline)
+                predicted_y = predictYNoThreshold(entry);
+            else
+                predicted_y = predictY(entry);
+
+            double error = entry.output - predicted_y;
 
             for (int i = 0; i < settings.vector_len; i++)
             {
@@ -45,9 +136,9 @@ namespace SieciNeuronoweZad1
             return error;
         }
 
-        public int predictY(Entry entry)
+        public double predictYNoThreshold(Entry entry)
         {
-            double sum = 0;
+            double y = 0;
 
             x_vector = new List<double>();
 
@@ -61,10 +152,14 @@ namespace SieciNeuronoweZad1
 
             for (int i = 0; i < settings.vector_len; i++)
             {
-                sum += w_vector[i] * x_vector[i];
+                y += w_vector[i] * x_vector[i];
             }
 
-            return (sum >= settings.threshold) ? settings.active_value : settings.inactive_value;
+            return y;
+        }
+        public double predictY(Entry entry)
+        {
+            return predictYNoThreshold(entry) >= settings.threshold ? settings.active_value : settings.inactive_value;
         }
 
         public string getWeightsString()

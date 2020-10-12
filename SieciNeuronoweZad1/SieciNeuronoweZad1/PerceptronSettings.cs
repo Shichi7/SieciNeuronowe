@@ -8,8 +8,12 @@ namespace SieciNeuronoweZad1
 {
     class PerceptronSettings
     {
+        public const int MAX_ITERATIONS = 10000;
+        public const double LMS_THRESHOLD = 0.5;
+
         public bool is_bipolar;
         public bool is_biased;
+        public bool is_adaline;
 
         public int vector_len;
 
@@ -19,13 +23,15 @@ namespace SieciNeuronoweZad1
 
         public int active_value, inactive_value;
 
-        public PerceptronSettings(double modifier, double starting_weight_range = 1.0, bool is_bipolar = false, bool is_biased = false, double custom_threshold = 0.5)
+        public PerceptronSettings(double modifier, double starting_weight_range = 1.0, bool adaline = false, bool is_bipolar = false, bool is_biased = false, double custom_threshold = 0.5)
         {
             this.starting_weight_range = starting_weight_range;
             this.modifier = modifier;
 
             this.is_biased = is_biased;
             this.is_bipolar = is_bipolar;
+            is_adaline = adaline;
+
             threshold = custom_threshold;
 
             active_value = 1;
