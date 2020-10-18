@@ -14,9 +14,10 @@ namespace SieciNeuronoweZad1
             Random generator = new Random();
             Perceptron.setGenerator(generator);
 
+            //perceptronWagesExperiment();
             //perceptronThresholdExperiment();
 
-            manager("AND", new PerceptronSettings(0.01, 1.0, false, false, false, 0.99));
+            manager("AND", new PerceptronSettings(0.01, 1.0, false, false, true));
         }
 
         static void perceptronThresholdExperiment()
@@ -25,7 +26,19 @@ namespace SieciNeuronoweZad1
 
             foreach (double threshold in thresholds)
             {
-                customExperiment(new PerceptronSettings(0.01, 1.0, false, false, false, threshold), "AND", 100);
+                customExperiment(new PerceptronSettings(0.01, 1.0, false, false, false, threshold), "OR", 100);
+            }
+
+            Console.ReadKey();
+        }
+
+        static void perceptronWagesExperiment()
+        {
+            List<double> wages = new List<double> { 1, 0.8, 0.6, 0.4, 0.2, 0.1, 0.001};
+
+            foreach (double wage in wages)
+            {
+                customExperiment(new PerceptronSettings(0.01, wage, false, false, true), "OR", 100);
             }
 
             Console.ReadKey();

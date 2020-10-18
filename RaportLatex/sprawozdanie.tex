@@ -1,0 +1,167 @@
+\documentclass[17pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\title{\textbf{SIECI NEURONOWE\\Sprawozdanie - Ćwiczenie 1}}
+\author{Aleksander Poławski\\Grupa - Poniedziałek 18:15\\Prowadzący - mgr inż. Jan Jakubik}
+\date{18 październik, 2020}
+
+\usepackage[none]{hyphenat}%%%%
+\setlength{\parindent}{0ex} 
+\sloppy
+
+\usepackage{caption}
+\captionsetup[table]{name=Tabela}
+
+\usepackage{geometry}
+ \geometry{
+ a4paper,
+ total={170mm,257mm},
+ left=25mm,
+ top=25mm,
+ right=25mm,
+ bottom=25mm
+ }
+
+\begin{document}
+
+\maketitle	
+
+\section{Cel ćwiczenia}
+Celem ćwiczenia pierwszego laboratoriów kursu Sieci Neuronowe było poznanie podstawowych funkcji wykonywanych przez pojedynczy neuron, obserwacja zachowania neuronu przy różnych funkcjach przejścia oraz określenie wielkości, które mają wpływ na szybkość uczenia neuronu.
+
+\section{Plan ćwiczenia oraz badań}
+
+\begin{enumerate}
+\item[a)] stworzenie programu symulującego działanie pojedynczego neuronu, w formie perceptronu prostego realizującego logiczną funkcję AND oraz przeprowadzenie eksperymentów badających szybkość i skuteczność uczenia się tego perceptronu w zależności od:
+
+\begin{itemize}
+\item wartości progu aktywacji i użycia dynamicznego progu (bias)
+\item zakresu wartości początkowych losowych wag
+\item wartości współczynnika uczenia $\alpha$
+\item zastosowanej funkcji przejścia neuronu (funkcji progowej unipolarnej lub funkcji progowej bipolarnej
+\end{itemize}
+
+\item[b)] modyfikacja zaimplementowanego perceptronu prostego do Adaline oraz przeprowadzenie podobnych badań jak w przypadku perceptronu prostego - tj. badań szybkości uczenia się Adaline w zależności od zakresu początkowych, losowych wag oraz współczynnika uczenia $\alpha$
+
+\item[c)] porównanie własności, skuteczności, wyników badań perceptronu prostego i Adaline
+
+\end{enumerate}
+
+\section{Opis zaimplementowanego programu}
+
+Program zaimplementowano w środowisku Visual Studio w języku C\#. Składa się z następujących klas:
+\begin{itemize}
+\item DataSets - umożliwia przechowywanie zbiorów uczących i testowych. Klasa pozwala na definiowanie i obsługę zbiorów o dowolnej liczbie wektorów wejściowych o dowolnej długości wektora wejściowego
+\item Entry - klasa opisująca pojedynczy wektor wejściowy
+\item PerceptronSettings - instancje tej klasy pozwalają na przechowywanie ustawień perceptronu takich jak: zakres wartości wag początkowych, rodzaj funkcji przejścia, użycie dynamicznego biasu, wartość progu aktywacji, rodzaj perceptronu (prosty lub adaline), wartość współczynnika uczenia $\alpha$ itd.
+\item Perceptron - klasa zawierająca logikę uczenia perceptronu o ustawieniach zdefiniowanych w instancji PerceptronSettings
+\item Program - klasa główna - manager - organizuje kolejność wykonywania zadań programu, zawiera predefiniowane testy potrzebne do wykonania badań przewidzianych w ćwiczeniu
+\end{itemize}
+
+Program w sposób prosty i intuicyjny umożliwia wykonanie wszystkich zaplanowanych w ćwiczeniu badań. Jego zaletą jest też możliwość rozwiązywania innych problemów niż "AND", dzięki implementacji obsługi danych wejściowych o różnych długościach wektorów wejściowych.
+
+\section{Badania}
+W poniższej sekcji zamieszczono i opisano wyniki badań.
+\subsection{Wpływ wartości progu aktywacji na wydajność uczenia preceptronu prostego}
+\vspace{4mm}
+\begin{enumerate}
+
+\item[a)] Założenia
+
+\begin{itemize}
+\item rodzaj perceptronu: [prosty]
+\item funkcja przejścia: [unipolarna]
+\item zakresu wartości początkowych wag: od [-0.8] do [0.8]
+\item wartość współczynnika uczenia $\alpha$: [0.01]
+\item brak dynamicznego progu - biasu
+\item \textbf{zmienna wartość progu aktywacji: [-0.50], [-0.25], [0.00], [0.25], [0.50], [0.75], [0.90]}
+\item koniec uczenia po 10000 iteracjach lub przy sumie błędów równej 0 dla całej epoki
+\end{itemize}
+
+\item[b)] Przebieg
+
+\begin{itemize}
+\item Dla każdej wartości progu wykonanych zostało 100 procedur uczenia, a następnie (dla każdej wartości) obliczona została średnia ilość iteracji potrzebnych do wyuczenia perceptronu.
+\item Dodatkowo, obok badań dla danych wejściowych wyrażenia "AND" wykonano także badania dla wyrażenia "OR" w celu potwierdzenia czy optymalna wartość progu zależna jest od zestawu wejściowego.
+\end{itemize}
+\item[c)] Otrzymane wyniki
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|p{4cm}|p{4cm}|p{4cm}|}
+ \hline
+ Próg aktywacji & AND - Średnia liczba iteracji ze 100 prób & OR - Średnia liczba iteracji ze 100 prób\\ \hline
+ -0.50 & nie wyuczono & nie wyuczono\\ 
+ -0.25 & nie wyuczono & nie wyuczono\\ 
+ 0.00 & nie wyuczono & nie wyuczono\\ 
+ 0.25 & 65.45 & 54.82\\ 
+ 0.50 & 55.98 & 67.56\\ 
+ 0.75 & 57.54 & 92.45\\ 
+ 0.90 & 46.02 & 103.20\\ 
+ \hline
+\end{tabular}
+\caption{\label{tab:table1}wpływ wartości progu aktywacji na wydajność uczenia preceptronu prostego}
+\end{table}
+
+\item[d)] Komentarz
+
+\begin{itemize}
+\item Wydajność perceptronu prostego jest silnie zależna od dobranej wartości progu aktywacji. Ponadto, optymalna wartość tego progu jest również mocno zależna od charakterystyki zestawu danych treningowych. 
+\item Wykonano podobne badanie tym razem używając dynamicznego progu (bias). Pomyślne wyuczenie następuje w tej konfiguracji średnio po 60 iteracjach (dla "OR" i "AND").
+\item Zalety wykorzystania automatycznego progu są nieocenione, a spadek wydajności znikomy. Alternatywą jego użycia byłoby strojenie progu aktywacji każdorazowo przy zmianie charakterystyki danych treningowych.
+\end{itemize}
+
+\end{enumerate}
+
+\subsection{Wpływ wartości zakresu wag początkowych na wydajność uczenia preceptronu prostego}
+\vspace{4mm}
+\begin{enumerate}
+
+\item[a)] Założenia
+
+\begin{itemize}
+\item rodzaj perceptronu: [prosty]
+\item funkcja przejścia: [unipolarna]
+\item wartość współczynnika uczenia $\alpha$: [0.01]
+\item dynamiczny próg - bias
+\item \textbf{zmienny zakres wartości początkowych wag: [-1.0] do [1.0], [-0.8] do [0.8], [-0.6] do [0.6], [-0.4] do [0.4], [-0.2] do [0.2], [-0.1] do [0.1], [-0.01] do [0.01]}
+\item koniec uczenia po 10000 iteracjach lub przy sumie błędów równej 0 dla całej epoki
+\end{itemize}
+
+\item[b)] Przebieg
+
+\begin{itemize}
+\item Dla każdej wartości zmiennej wykonanych zostało 100 procedur uczenia, a następnie (dla każdej wartości) obliczona została średnia ilość iteracji potrzebnych do wyuczenia perceptronu.
+\end{itemize}
+\item[c)] Otrzymane wyniki
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|p{4cm}|p{4cm}|}
+ \hline
+ Zakres wag początkowych & Średnia liczba iteracji ze 100 prób\\ \hline
+ -1.0 do 1.0 & 67.88\\ 
+ -0.8 do 0.8 & 54.08\\ 
+ -0.6 do 0.6 & 36.66\\ 
+ -0.4 do 0.4 & 28.96\\ 
+ -0.2 do 0.2 & 15.79\\ 
+ -0.1 do 0.1 & 9.09\\ 
+ -0.01 do 0.01 & 3.88\\ 
+ \hline
+\end{tabular}
+\caption{\label{tab:table2}wpływ wartości zakresu wag początkowych na wydajność uczenia preceptronu prostego}
+\end{table}
+
+\item[d)] Komentarz
+
+\begin{itemize}
+\item Wydajność perceptronu prostego jest silnie zależna od dobranej wartości progu aktywacji. Ponadto, optymalna wartość tego progu jest również mocno zależna od charakterystyki zestawu danych treningowych. 
+\item Wykonano podobne badanie tym razem używając dynamicznego progu (bias). Pomyślne wyuczenie następuje w tej konfiguracji średnio po 60 iteracjach (dla "OR" i "AND").
+\item Zalety wykorzystania automatycznego progu są nieocenione, a spadek wydajności znikomy. Alternatywą jego użycia byłoby strojenie progu aktywacji każdorazowo przy zmianie charakterystyki danych treningowych.
+\end{itemize}
+
+\end{enumerate}
+
+
+\end{document}
