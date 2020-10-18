@@ -16,8 +16,11 @@ namespace SieciNeuronoweZad1
 
             //perceptronWagesExperiment();
             //perceptronThresholdExperiment();
+            perceptronAlphasExperiment();
+            //perceptronFunctionExperiment();
 
-            manager("AND", new PerceptronSettings(0.01, 1.0, false, false, true));
+            //manager("AND", new PerceptronSettings(100, 0.05, false, false, false));
+            manager("AND", new PerceptronSettings(0.01, 0.001, true, true, true));
         }
 
         static void perceptronThresholdExperiment()
@@ -38,8 +41,29 @@ namespace SieciNeuronoweZad1
 
             foreach (double wage in wages)
             {
-                customExperiment(new PerceptronSettings(0.01, wage, false, false, true), "OR", 100);
+                customExperiment(new PerceptronSettings(0.01, wage, false, true, true), "AND", 100);
             }
+
+            Console.ReadKey();
+        }
+
+        static void perceptronAlphasExperiment()
+        {
+            List<double> alphas = new List<double> { 0.01, 0.02, 0.03, 0.05, 0.055, 0.060, 1};
+
+            foreach (double alpha in alphas)
+            {
+                customExperiment(new PerceptronSettings(alpha, 0.5, true, true, true), "AND", 100);
+            }
+
+            Console.ReadKey();
+        }
+        static void perceptronFunctionExperiment()
+        {
+            customExperiment(new PerceptronSettings(0.01, 0.5, false, false, true), "AND", 100);
+            customExperiment(new PerceptronSettings(0.01, 0.5, false, true, true), "AND", 100);
+            customExperiment(new PerceptronSettings(0.2, 0.01, false, false, true), "AND", 100);
+            customExperiment(new PerceptronSettings(0.2, 0.01, false, true, true), "AND", 100);
 
             Console.ReadKey();
         }

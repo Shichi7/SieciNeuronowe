@@ -63,7 +63,7 @@ Program w sposób prosty i intuicyjny umożliwia wykonanie wszystkich zaplanowan
 
 \section{Badania}
 W poniższej sekcji zamieszczono i opisano wyniki badań.
-\subsection{Wpływ wartości progu aktywacji na wydajność uczenia preceptronu prostego}
+\subsection{Wpływ wartości progu aktywacji na wydajność uczenia perceptronu prostego}
 \vspace{4mm}
 \begin{enumerate}
 
@@ -72,7 +72,7 @@ W poniższej sekcji zamieszczono i opisano wyniki badań.
 \begin{itemize}
 \item rodzaj perceptronu: [prosty]
 \item funkcja przejścia: [unipolarna]
-\item zakresu wartości początkowych wag: od [-0.8] do [0.8]
+\item zakres wartości początkowych wag: od [-0.8] do [0.8]
 \item wartość współczynnika uczenia $\alpha$: [0.01]
 \item brak dynamicznego progu - biasu
 \item \textbf{zmienna wartość progu aktywacji: [-0.50], [-0.25], [0.00], [0.25], [0.50], [0.75], [0.90]}
@@ -101,20 +101,21 @@ W poniższej sekcji zamieszczono i opisano wyniki badań.
  0.90 & 46.02 & 103.20\\ 
  \hline
 \end{tabular}
-\caption{\label{tab:table1}wpływ wartości progu aktywacji na wydajność uczenia preceptronu prostego}
+\caption{\label{tab:table1}wpływ wartości progu aktywacji na wydajność uczenia perceptronu prostego}
 \end{table}
 
 \item[d)] Komentarz
 
 \begin{itemize}
-\item Wydajność perceptronu prostego jest silnie zależna od dobranej wartości progu aktywacji. Ponadto, optymalna wartość tego progu jest również mocno zależna od charakterystyki zestawu danych treningowych. 
+\item Badania pokazały, że wydajność perceptronu prostego jest silnie zależna od dobranej wartości progu aktywacji. Ponadto, optymalna wartość tego progu jest również mocno zależna od charakterystyki zestawu danych treningowych. 
+\item Źle dobrany próg jest w stanie całkowicie uniemożliwić wyuczenie perceptronu.
 \item Wykonano podobne badanie tym razem używając dynamicznego progu (bias). Pomyślne wyuczenie następuje w tej konfiguracji średnio po 60 iteracjach (dla "OR" i "AND").
 \item Zalety wykorzystania automatycznego progu są nieocenione, a spadek wydajności znikomy. Alternatywą jego użycia byłoby strojenie progu aktywacji każdorazowo przy zmianie charakterystyki danych treningowych.
 \end{itemize}
 
 \end{enumerate}
 
-\subsection{Wpływ wartości zakresu wag początkowych na wydajność uczenia preceptronu prostego}
+\subsection{Wpływ wartości zakresu wag początkowych na wydajność uczenia perceptronu prostego}
 \vspace{4mm}
 \begin{enumerate}
 
@@ -150,18 +151,231 @@ W poniższej sekcji zamieszczono i opisano wyniki badań.
  -0.01 do 0.01 & 3.88\\ 
  \hline
 \end{tabular}
-\caption{\label{tab:table2}wpływ wartości zakresu wag początkowych na wydajność uczenia preceptronu prostego}
+\caption{\label{tab:table2}wpływ wartości zakresu wag początkowych na wydajność uczenia perceptronu prostego}
 \end{table}
 
 \item[d)] Komentarz
 
 \begin{itemize}
-\item Wydajność perceptronu prostego jest silnie zależna od dobranej wartości progu aktywacji. Ponadto, optymalna wartość tego progu jest również mocno zależna od charakterystyki zestawu danych treningowych. 
-\item Wykonano podobne badanie tym razem używając dynamicznego progu (bias). Pomyślne wyuczenie następuje w tej konfiguracji średnio po 60 iteracjach (dla "OR" i "AND").
-\item Zalety wykorzystania automatycznego progu są nieocenione, a spadek wydajności znikomy. Alternatywą jego użycia byłoby strojenie progu aktywacji każdorazowo przy zmianie charakterystyki danych treningowych.
+\item Eksperyment wykazał, że najwydajniejsze w tym wypadku jest ustawienie jak najmniejszej wartości wag początkowych
+\item Sprawdzono dalej, że tendencja ta nie zależy od rodzaju danych wejściowych ("AND"/"OR")
+\item Dalsze badania wykazały, że istotna jest korelacja wag ze współczynnikiem $\alpha$, najlepsze wyniki osiągane są, jeśli te dwa parametry są podobnego rzędu wielkości, co tłumaczy otrzymane wyniki badania
 \end{itemize}
 
 \end{enumerate}
 
+\subsection{Wpływ wartości współczynnika uczenia $\alpha$ na wydajność uczenia perceptronu prostego}
+\vspace{4mm}
+\begin{enumerate}
+
+\item[a)] Założenia
+
+\begin{itemize}
+\item rodzaj perceptronu: [prosty]
+\item funkcja przejścia: [unipolarna]
+\item \textbf{wartość współczynnika uczenia $\alpha$: [0.01], [0.05], [0.2], [0.5], [0.9], [1.00], [10.00]}
+\item dynamiczny próg - bias
+\item zakres wartości początkowych wag: od [-0.5] do [0.5]
+\item koniec uczenia po 10000 iteracjach lub przy sumie błędów równej 0 dla całej epoki
+\end{itemize}
+\newpage
+\item[b)] Przebieg
+
+\begin{itemize}
+\item Dla każdej wartości zmiennej wykonanych zostało 100 procedur uczenia, a następnie (dla każdej wartości) obliczona została średnia ilość iteracji potrzebnych do wyuczenia perceptronu.
+\end{itemize}
+\item[c)] Otrzymane wyniki
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|p{4cm}|p{4cm}|}
+ \hline
+ Wartość współczynnika $\alpha$ & Średnia liczba iteracji ze 100 prób\\ \hline
+ 0.01 & 30.84\\ 
+ 0.05 & 10.44\\ 
+ 0.20 & 6.09\\ 
+ 0.50 & 6.31\\ 
+ 0.90 & 5.92\\ 
+ 1.00 & 5.90\\ 
+ \hline
+\end{tabular}
+\caption{\label{tab:table3}wpływ wartości współczynnika uczenia $\alpha$ na wydajność uczenia perceptronu prostego}
+\end{table}
+
+\item[d)] Komentarz
+
+
+\begin{itemize}
+\item Eksperyment potwierdza korelację parametru z zakresem wag początkowych stwierdzoną we wnioskach badania poprzedniego (istotne jest wzajemne dobranie wag początkowych i skoku uczenia)
+\item Zupełnie inne wnioski wynikają z badań przy wyłączonym automatycznym progu (biasie). Okazuje się, że oprócz korelacji z początkowym zakresem wag istnieje silna korelacja z dobieranym progiem aktywacji. Jest to kolejne potwierdzenie ogromnej roli biasu w implementacji perceptronu.
+\end{itemize}
+
+
+\end{enumerate}
+
+\subsection{Wpływ funkcji przejścia na wydajność uczenia perceptronu prostego}
+\vspace{4mm}
+\begin{enumerate}
+
+\item[a)] Założenia
+
+\begin{itemize}
+\item rodzaj perceptronu: [prosty]
+\item \textbf{zmienna funkcja przejścia: [unipolarna], [bipolarna]}
+\item wartość współczynnika uczenia $\alpha$: [0.01]
+\item dynamiczny próg - bias
+\item zakres wartości początkowych wag: od [-0.5] do [0.5]
+\item koniec uczenia po 10000 iteracjach lub przy sumie błędów równej 0 dla całej epoki
+\end{itemize}
+
+\item[b)] Przebieg
+
+\begin{itemize}
+\item Dla każdej wartości zmiennej wykonanych zostało 100 procedur uczenia, a następnie (dla każdej wartości) obliczona została średnia ilość iteracji potrzebnych do wyuczenia perceptronu.
+\end{itemize}
+\item[c)] Otrzymane wyniki
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|p{4cm}|p{4cm}|p{4cm}|}
+ \hline
+ Funkcja przejścia & AND - Średnia liczba iteracji ze 100 prób & OR - Średnia liczba iteracji ze 100 prób\\ \hline
+ unipolarna & 37.34 & 37.20\\ 
+ bipolarna & 9.15 & 9.34\\ 
+ \hline
+\end{tabular}
+\caption{\label{tab:table4}wpływ funkcji przejścia na wydajność uczenia perceptronu prostego}
+\end{table}
+
+\item[d)] Komentarz
+
+\begin{itemize}
+\item Eksperyment wykazał, że przy podobnych ustawieniach funkcja przejścia bipolarna jest efektywniejsza od unipolarnej niezależnie od postawionego problemu
+\item Badania powtórzono przy innych ustawieniach wag oraz współczynnika uczenia i tendencja potwierdziła się
+\end{itemize}
+
+\end{enumerate}
+
+\subsection{Wpływ wartości zakresu wag początkowych na wydajność uczenia perceptronu Adaline}
+\vspace{4mm}
+\begin{enumerate}
+
+\item[a)] Założenia
+
+\begin{itemize}
+\item rodzaj perceptronu: [Adaline]
+\item funkcja przejścia: [bipolarna]
+\item wartość współczynnika uczenia $\alpha$: [0.01]
+\item dynamiczny próg - bias
+\item \textbf{zmienny zakres wartości początkowych wag: [-1.0] do [1.0], [-0.8] do [0.8], [-0.6] do [0.6], [-0.4] do [0.4], [-0.2] do [0.2], [-0.1] do [0.1], [-0.01] do [0.01]}
+\item koniec uczenia po 10000 iteracjach lub przy LMS równym 0.3 dla całej epoki
+\end{itemize}
+
+\item[b)] Przebieg
+
+\begin{itemize}
+\item Dla każdej wartości zmiennej wykonanych zostało 100 procedur uczenia, a następnie (dla każdej wartości) obliczona została średnia ilość iteracji potrzebnych do wyuczenia perceptronu.
+\end{itemize}
+\item[c)] Otrzymane wyniki
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|p{4cm}|p{4cm}|}
+ \hline
+ Zakres wag początkowych & Średnia liczba iteracji ze 100 prób\\ \hline
+ -1.0 do 1.0 & 42.59\\ 
+ -0.8 do 0.8 & 40.27\\ 
+ -0.6 do 0.6 & 37.5\\ 
+ -0.4 do 0.4 & 36.65\\ 
+ -0.2 do 0.2 & 36.27\\ 
+ -0.1 do 0.1 & 36.38\\ 
+ -0.01 do 0.01 & 36.02\\ 
+ \hline
+\end{tabular}
+\caption{\label{tab:table5}wpływ wartości zakresu wag początkowych na wydajność uczenia perceptronu Adaline}
+\end{table}
+
+\item[d)] Komentarz
+
+\begin{itemize}
+\item Badania wykazały podobne zależności jak w przypadku analogicznych badań dla perceptronu prostego (sekcja 4.2)
+\item Wpływ zakresu wag początkowych wydaje się w tym wypadku (adaline) mniejszy, jednak fakt ten jest prawdopodobnie silnie uwarunkowany inną funkcją wyliczania błędu (rzeczywiste wartości - mniejsza korekcja wag w kroku)
+\end{itemize}
+
+\end{enumerate}
+
+\subsection{Wpływ wartości współczynnika uczenia $\alpha$ na wydajność uczenia perceptronu Adaline}
+\vspace{4mm}
+\begin{enumerate}
+
+\item[a)] Założenia
+
+\begin{itemize}
+\item rodzaj perceptronu: [Adaline]
+\item funkcja przejścia: [bipolarna]
+\item \textbf{wartość współczynnika uczenia $\alpha$: [0.01], [0.02], [0.03], [0.05], [0.055], [0.060], [0.07]}
+\item dynamiczny próg - bias
+\item zakres wartości początkowych wag: od [-0.5] do [0.5]
+\item koniec uczenia po 10000 iteracjach lub przy LMS równym 0.3 dla całej epoki
+\end{itemize}
+\newpage
+\item[b)] Przebieg
+
+\begin{itemize}
+\item Dla każdej wartości zmiennej wykonanych zostało 100 procedur uczenia, a następnie (dla każdej wartości) obliczona została średnia ilość iteracji potrzebnych do wyuczenia perceptronu.
+\end{itemize}
+\item[c)] Otrzymane wyniki
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|p{4cm}|p{4cm}|}
+ \hline
+ Wartość współczynnika $\alpha$ & Średnia liczba iteracji ze 100 prób\\ \hline
+ 0.010 & 35.15\\ 
+ 0.020 & 21.10\\ 
+ 0.030 & 14.07\\ 
+ 0.050 & 11.31\\ 
+ 0.055 & 11.12\\ 
+ 0.060 & nie wyuczono\\ 
+ \hline
+\end{tabular}
+\caption{\label{tab:table6}wpływ wartości współczynnika uczenia $\alpha$ na wydajność uczenia perceptronu Adaline}
+\end{table}
+
+\item[d)] Komentarz
+
+
+\begin{itemize}
+\item Badania wykazały, że Adaline jest silnie zależny od współczynnika uczenia mimo użycia dynamicznego progu (bias)
+\item Zbyt duży współczynnik powoduje za duży krok uczenia i ciągłe (cykliczne) 'przeskakiwanie' optymalnych wartości wag, a w wyniku nie osiąganie wyznaczonego progu błędu średniokwadratowego i pożądanych wyników
+\item Z drugiej strony, im większy współczynnik tym większa szansa na szybsze znalezienie optimum
+\end{itemize}
+
+
+\end{enumerate}
+
+\subsection{Wpływ wartości dopuszczalnego błędu na wydajność i skuteczność uczenia perceptronu Adaline}
+\vspace{4mm}
+
+Badania wykazały, że zgodnie z intuicją proces nauczania Adaline jest krótszy dla większych wartości dopuszczalnego błędu.\\
+
+W przeciwieństwie do perceptronu prostego nie jest jednak możliwe stwierdzenie, że Adaline został skutecznie wyuczony (przed dokonaniem testów). Im większy dopuszczalny błąd średniokwadratowy tym większa szansa, że uczenie zakończony się niepowodzeniem.
+
+\subsection{Porównanie wyników badań Adaline i perceptronu prostego}
+\vspace{4mm}
+
+Szczegółowe porównanie zostało przedstawione w poszczególnych sekcjach sprawozdania. Poniżej przedstawiono wybrane różnice i podobieństwa oraz wnioski wynikające z dodatkowych badań:
+
+\begin{itemize}
+\item Użycie Adaline nie daje pewności wyuczenia dla określonych danych treningowych (w przeciwieństwie do perceptronu prostego). Z drugiej strony, jeśli nie uda się dobrze dostroić perceptronu prostego, nie otrzymamy prawie żadnych wyników, a w wypadku Adaline mimo braku całkowitego wyuczenia otrzymamy działający (w jakimś stopniu) model.
+\item Niezależnie od użytego perceptronu zmiana zakresu wag początkowych, współczynnika uczenia lub progu aktywacji powoduje podobne zmiany wydajności (ważniejsza jest wzajemna zależność między wymienionymi parametrami).
+\item Nie stwierdzono wyższości jednego z perceptronów nad drugim w kontekście wydajności. Zależy ona głównie od innych parametrów.
+\item W obu przypadkach użycie automatycznego progu (biasu) wiąże się z ogromnymi korzyściami i ułatwia strojenie innych parametrów.
+\item Po wykonaniu dodatkowych badań, korzystając z danych treningowych opartych na "XOR", potwierdzony został fakt, że Adaline i perceptron prosty są w stanie rozwiązać tylko problemy separowalnie liniowe.
+\end{itemize}
+
+\section{Podsumowanie}
+
+Pomyślnie udało się zrealizować wytyczne zadania i dokonać ciekawych badań. W wyniku poznano elementarne pojęcia dotyczące sieci neuronowych oraz nauczono się mechanizmów działania perceptronu prostego i perceptronu Adaline.
 
 \end{document}
