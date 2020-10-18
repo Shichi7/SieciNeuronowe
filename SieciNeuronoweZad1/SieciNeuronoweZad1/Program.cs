@@ -8,27 +8,48 @@ namespace SieciNeuronoweZad1
 {
     class Program
     {
-        private static int experiment_number = 1;
-
+        static int experiment_number = 1;
         static void Main(string[] args)
         {
             Random generator = new Random();
             Perceptron.setGenerator(generator);
 
-            manager("AND", new PerceptronSettings(0.005, 1.0, true, false, true));
-            manager("OR", new PerceptronSettings(0.005, 1.0, true, false, true));
-            manager("AND", new PerceptronSettings(0.005, 1.0, false, false, true));
-            manager("OR", new PerceptronSettings(0.005, 1.0, false, true, true));
+            //perceptronThresholdExperiment();
 
+            manager("AND", new PerceptronSettings(0.01, 1.0, false, false, false, 0.99));
         }
 
-        static void manager(string problem_name, PerceptronSettings settings)
+        static void perceptronThresholdExperiment()
         {
-            string log = string.Format("EKSPERYMENT [{0}]\n\n", experiment_number);
+            List<double> thresholds = new List<double> { -0.5, -0.25, 0, 0.25, 0.5, 0.75, 0.9};
+
+            foreach (double threshold in thresholds)
+            {
+                customExperiment(new PerceptronSettings(0.01, 1.0, false, false, false, threshold), "AND", 100);
+            }
+
+            Console.ReadKey();
+        }
+
+        static void customExperiment(PerceptronSettings settings, string data_name, int reps)
+        {
+            double mean_iterations = 0;
+            for (int i = 0; i<reps; i++)
+            {
+                mean_iterations += manager(data_name, settings, false);
+            }
+            mean_iterations /= reps;
+
+            Console.WriteLine("Eksperyment {0} - średnia liczba iteracji: [{1}]", experiment_number++, mean_iterations);
+        }
+
+        static int manager(string problem_name, PerceptronSettings settings, bool log_results = true)
+        {
+            string log = string.Format("EKSPERYMENT START~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
 
             Perceptron perceptron = new Perceptron(settings, problem_name);
 
-            perceptron.teach();
+            int iterations = perceptron.teach();
             log += perceptron.teaching_log;
 
             if (perceptron.teaching_successfull)
@@ -37,10 +58,13 @@ namespace SieciNeuronoweZad1
                 log += perceptron.testing_log;
             }
 
-            experiment_number++;
+            if (log_results)
+            {
+                Console.WriteLine(log);
+                Console.ReadKey();
+            }
 
-            Console.WriteLine(log);
-            Console.ReadKey();
+            return iterations;
         }
     }
 }

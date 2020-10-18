@@ -9,7 +9,7 @@ namespace SieciNeuronoweZad1
     class PerceptronSettings
     {
         public const int MAX_ITERATIONS = 10000;
-        public const double LMS_THRESHOLD = 0.5;
+        public const double LMS_THRESHOLD = 0.3;
 
         public bool is_bipolar;
         public bool is_biased;

@@ -47,17 +47,16 @@ namespace SieciNeuronoweZad1
             }
         }
 
-        public void teach()
+        public int teach()
         {
             teaching_log = "";
             teaching_log += string.Format("Nazwa danych: [{0}]\n", problem_name);
             teaching_log += settings.dumpSettingsString();
 
+            int iterations = 0;
             if (training_dataset.Count > 0)
             {
                 teaching_log += string.Format("Wektor wag początkowych: {0}\n\n", getWeightsString());
-
-                int iterations = 0;
 
                 bool run_loop = true;
 
@@ -101,6 +100,8 @@ namespace SieciNeuronoweZad1
                 teaching_successfull = false;
                 teaching_log += string.Format("Nie ma danych o nazwie[{0}]\n\n", problem_name); ;
             }
+
+            return iterations;
         }
 
         public void test()
@@ -126,6 +127,7 @@ namespace SieciNeuronoweZad1
                 predicted_y = predictY(entry);
 
             double error = entry.output - predicted_y;
+            //Console.WriteLine(string.Format("[{0}] - [{1}] = [{2}]", entry.output, predicted_y, error));
 
             for (int i = 0; i < settings.vector_len; i++)
             {
