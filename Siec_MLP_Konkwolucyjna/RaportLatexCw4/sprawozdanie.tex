@@ -1,0 +1,77 @@
+\documentclass[17pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{multirow}
+\usepackage{array}
+
+\title{\textbf{SIECI NEURONOWE\\Sprawozdanie - Ćwiczenie 4}}
+\author{Aleksander Poławski\\Grupa - Poniedziałek 18:15\\Prowadzący - mgr inż. Jan Jakubik}
+\date{13 grudzień, 2020}
+
+\usepackage[none]{hyphenat}%%%%
+\setlength{\parindent}{0ex} 
+\sloppy
+
+\usepackage{caption}
+\captionsetup[table]{name=Tabela}
+
+\usepackage{geometry}
+ \geometry{
+ a4paper,
+ total={170mm,257mm},
+ left=25mm,
+ top=25mm,
+ right=25mm,
+ bottom=25mm
+ }
+
+\begin{document}
+
+\maketitle	
+
+\section{Cel ćwiczenia}
+Celem ćwiczenia czwartego laboratoriów kursu Sieci Neuronowe było poznanie podstawowych operacji realizowanych w sieciach konwolucyjnych, sposobu przetwarzania informacji wejściowej i sposobu uczenia takich sieci.
+
+\section{Plan ćwiczenia oraz badań}
+
+\begin{enumerate}
+\item[a)] implementacja architektury sieci konwolucyjnej i fazy przesyłania w przód 
+
+\item[b)] implementacja uczenia sieci konwolucyjnej
+
+\item[c)] przeprowadzenie eksperymentów badających skuteczność implementowanych metod i porównanie wyników z sieciami implementowanymi w poprzednich zadaniach
+
+\end{enumerate}
+
+\section{Opis zaimplementowanego programu}
+
+Do wykonania zadania rozwinięto program implementowany do zadania drugiego i trzeciego laboratorium.\\
+
+Program zaimplementowano w środowisku PyCharm w języku Python, korzystając między innymi z bibliotek Numpy do przetwarzania obliczeń macierzowych.\\
+
+Przed wykonaniem zadania w jego skład wchodziły następujące elementy:
+\begin{itemize}
+\item klasa Loader - umożliwia wczytywanie, przechowywanie i konwersję zbiorów uczących i testowych. Zawiera proste funkcje pomagające stwierdzić poprawność wczytania zbiorów.
+\item klasa MLP - zawiera całą logikę tworzenia, ustawień, uczenia i testowania sieci MLP
+\item klasa MLPLayer - zawiera całą logikę tworzenia, ustawień i działania poszczególnych warstw sieci
+\item plik main - manager programu - organizujący kolejność wykonywania zadań programu, zawierający predefiniowane testy potrzebne do wykonania badań przewidzianych w ćwiczeniu
+\end{itemize}
+
+W trakcie wykonywania zadania dokonano następujących zmian:
+\begin{itemize}
+\item klasa Loader - rozbudowano klasę o możliwość wczytywania zbiorów testowych i treningowych w formacie odpowiednim na wejście warstwy konwolucyjnej
+\item klasa Convo - dodano klasę zawierającą całą logikę tworzenia, ustawień, architekturę sieci konwolucyjnych
+\item klasa ConvoLayer - dodano klasę zawierającą całą logikę tworzenia, ustawień i działania poszczególnych warstw sieci, w tym możliwość konwolucji, poolingu i spłaszczania map cech na wyjście do warstw w pełni połączonych
+\end{itemize}
+
+\newpage
+
+\section{Podsumowanie}
+\vspace{4mm}
+
+Niestety zadanie zrealizowano tylko w zakresie implementacji architektury sieci konwolucyjnej oraz fazy przesyłania w przód. W związku z tym niemożliwe było wykonanie badań (bez implementacji uczenia) oraz porównanie wyników z siecią MLP implementowaną w poprzednich zadaniach.\\
+
+W toku wykonywania ćwiczenia rozwinięto swoją wiedzę na temat elementarnych pojęć dotyczących sieci neuronowych poznając zasadę działania i architekturę sieci konwolucyjnej.
+
+
+\end{document}

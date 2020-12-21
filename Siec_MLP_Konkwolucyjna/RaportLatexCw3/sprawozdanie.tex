@@ -1,0 +1,237 @@
+\documentclass[17pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{multirow}
+\usepackage{array}
+
+\title{\textbf{SIECI NEURONOWE\\Sprawozdanie - Ćwiczenie 3}}
+\author{Aleksander Poławski\\Grupa - Poniedziałek 18:15\\Prowadzący - mgr inż. Jan Jakubik}
+\date{29 listopad, 2020}
+
+\usepackage[none]{hyphenat}%%%%
+\setlength{\parindent}{0ex} 
+\sloppy
+
+\usepackage{caption}
+\captionsetup[table]{name=Tabela}
+
+\usepackage{geometry}
+ \geometry{
+ a4paper,
+ total={170mm,257mm},
+ left=25mm,
+ top=25mm,
+ right=25mm,
+ bottom=25mm
+ }
+
+\begin{document}
+
+\maketitle	
+
+\section{Cel ćwiczenia}
+Celem ćwiczenia trzeciego laboratoriów kursu Sieci Neuronowe było zapoznanie się z technikami poprawiającymi szybkość uczenia sieci poprzez implementację metod optymalizacji współczynnika uczenia oraz metod inicjalizacji wag.
+
+\section{Plan ćwiczenia oraz badań}
+
+\begin{enumerate}
+\item[a)] implementacja metod optymalizacji współczynnika uczenia\\ (MOMENTUM PROSTE/MOMENTUM NESTEROVA/ADAGRAD/ADADELTA/ADAM)
+
+\item[b)] implementacja metod inicjalizacji wag (HE/XAVIER)
+
+\item[c)] przeprowadzenie eksperymentów badających skuteczność implementowanych metod
+
+\end{enumerate}
+
+\section{Opis zaimplementowanego programu}
+
+Do wykonania zadania rozwinięto program implementowany do zadania drugiego laboratorium.\\
+
+Program zaimplementowano w środowisku PyCharm w języku Python, korzystając między innymi z bibliotek Numpy do przetwarzania obliczeń macierzowych.\\
+
+W jego skład wchodzą następujące elementy:
+\begin{itemize}
+\item klasa Loader - umożliwia wczytywanie, przechowywanie i konwersję zbiorów uczących i testowych. Zawiera proste funkcje pomagające stwierdzić poprawność wczytania zbiorów.
+\item klasa MLP - zawiera całą logikę tworzenia, ustawień, uczenia i testowania sieci MLP
+\item klasa MLPLayer - zawiera całą logikę tworzenia, ustawień i działania poszczególnych warstw sieci
+\item plik main - manager programu - organizujący kolejność wykonywania zadań programu, zawierający predefiniowane testy potrzebne do wykonania badań przewidzianych w ćwiczeniu
+\end{itemize}
+
+Program w sposób prosty i intuicyjny umożliwia wykonanie wszystkich zaplanowanych w ćwiczeniu badań. Rozszerzono go o metody inicjalizacji wag (HE/XAVIER) oraz metody optymalizacji współczynnika uczenia (MOMENTUM PROSTE/MOMENTUM NESTEROVA/ADAGRAD/ADADELTA/ADAM).
+
+\section{Badania}
+W poniższej sekcji zamieszczono i opisano wyniki badań.
+\subsection{Wpływ optymalizatora współczynnika uczenia na skuteczność sieci MLP}
+\vspace{4mm}
+\begin{enumerate}
+
+\item[a)] Założenia
+
+\begin{itemize}
+\item liczba warstw ukrytych: [3]
+\item liczba neuronów w warstwach ukrytych: [10]
+\item funkcja aktywacji w warstwach ukrytych: [ReLU]
+\item inicjalizacja wag i biasów: [rozkład normalny]
+\item odchylenie standardowe w inicjalizacji wag: [0.1]
+\item wielkość paczki (batch): [25]
+\item wyjściowy współczynnik $\alpha$: [0.001]
+\item \textbf{zmienny optymalizator współczynnika: 
+[MOMENTUM], [NESTEROV], [ADAGRAD], [ADADELTA], [ADAM], [brak]}
+\end{itemize}
+
+\item[b)] Przebieg dla każdego ustawienia
+
+\begin{itemize}
+\item wykonanych zostało 10 procedur po 5 iteracji uczenia
+\item dokonano klasyfikacji obiektów zbioru testowego dla każdej iteracji
+\item obliczono średnią trafność klasyfikacji dla każdej iteracji ze wszystkich procedur uczenia
+\end{itemize}
+\item[c)] Otrzymane wyniki
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|>{\centering\arraybackslash}p{3cm}||>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{2cm}|}\hline
+ optymalizator&\multicolumn{5}{c|}{średnia trafność klasyfikacji po iteracji}\\ \cline{2-6}
+ &I&II&III&IV&V\\ \hline
+ brak& 09.79\% & 10.01\% & 09.11\% & 10.11\% & 10.07\% \\ 
+ MOMENTUM& 15.32\% & 24.25\% & 65.63\% & 81.05\% & 83.44\% \\ 
+ NESTEROV& 11.35\% & 13.03\% & 23.34\% & 69.95\% & 80.10\% \\ 
+ ADAGRAD& 36.81\% & 51.87\% & 62.86\% & 66.99\% & 68.85\% \\ 
+ ADADELTA& 75.28\% & 79.23\% & 80.08\% & 81.42\% & 83.12\% \\ 
+ ADAM& 76.01\% & 79.23\% & 82.85\% & 83.11\% & 84.97\% \\  \hline
+\end{tabular}
+\caption{\label{tab:table1}Wpływ optymalizatora współczynnika uczenia na skuteczność sieci MLP}
+\end{table}
+
+\item[d)] Komentarz
+
+\begin{itemize}
+\item Wszystkie implementowane metody znacznie poprawiają wydajność i czas uczenia sieci dla większej (niż jedna) liczby warstw ukrytych.
+\item Brak użycia optymalizatorów praktycznie uniemożliwia dobry dobór współczynnika uczenia, parametr ten jest bardzo wrażliwy. W wynikach tego badania zauważyć można, że skorzystanie ze współczynnika równego 0.001 przy trzech warstwach sieci skutkuje brakiem uczenia.
+\item ADAGRAD zapewnia szybsze uczenie w pierwszych iteracjach (niż momentum proste lub nesterova), lecz wydajność szybko wygasa z kolejnymi iteracjami. Potwierdza to założenia teoretyczne (suma kwadratów gradientów w mianowniku modyfikatora wag ciągle rośnie, aż staje się tak duża, że modyfikacja zaczyna wynosić zero).
+\item Najlepsze wyniki wykazały optymalizatory ADADELTA oraz ADAM.
+
+\end{itemize}
+
+\end{enumerate}
+
+\newpage
+
+\subsection{Wpływ metody inicjalizacji wag na skuteczność sieci MLP}
+\vspace{4mm}
+\begin{enumerate}
+
+\item[a)] Założenia
+
+\begin{itemize}
+\item liczba warstw ukrytych: [3]
+\item liczba neuronów w warstwach ukrytych: [10]
+\item \textbf{zmienna funkcja aktywacji w warstwach ukrytych: [ReLU], [TanH]}
+\item inicjalizacja wag i biasów: [rozkład normalny]
+\item wielkość paczki (batch): [25]
+\item współczynnik uczenia $\alpha$: [0.001]
+\item odchylenie standardowe w inicjalizacji wag (jeśli brak optymalizatora): [0.1]
+\item \textbf{zmienna metoda optymalizacji wag: 
+[HE], [XAVIER], [brak]}
+\end{itemize}
+
+\item[b)] Przebieg dla każdego ustawienia
+
+\begin{itemize}
+\item wykonanych zostało 10 procedur po 5 iteracji uczenia
+\item dokonano klasyfikacji obiektów zbioru testowego dla każdej iteracji
+\item obliczono średnią trafność klasyfikacji dla każdej iteracji ze wszystkich procedur uczenia
+\end{itemize}
+\item[c)] Otrzymane wyniki
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|>{\centering\arraybackslash}p{3cm}||>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{2cm}|}\hline
+ inic. wag /aktywacja&\multicolumn{5}{c|}{średnia trafność klasyfikacji po iteracji}\\ \cline{2-6}
+ &I&II&III&IV&V\\ \hline
+ brak/ReLU& 09.79\% & 10.01\% & 09.11\% & 10.11\% & 10.07\% \\ 
+ brak/TanH& 10.58\% & 10.92\% & 11.03\% & 11.87\% & 16.33\% \\ 
+ HE/ReLU& 32.12\% & 41.71\% & 49.83\% & 60.61\% & 67.45\% \\ 
+ HE/TanH& 46.73\% & 58.69\% & 67.17\% & 73.83\% & 77.96\% \\ 
+ XAVIER/TanH& 32.35\% & 48.17\% & 55.93\% & 60.87\% & 66.77\% \\ 
+ XAVIER/ReLU& 16.11\% & 22.30\% & 22.88\% & 22.68\% & 23.55\% \\ \hline
+\end{tabular}
+\caption{\label{tab:table2}Wpływ metody inicjalizacji wag na skuteczność sieci MLP}
+\end{table}
+
+\item[d)] Komentarz
+
+\begin{itemize}
+\item Użycie automatycznych inicjalizatorów wag umożliwia uczenie nawet dla nie do końca korzystnych pozostałych ustawień (np. współczynnika alfa i braku użycia optymalizatorów współczynnika uczenia).
+\item Zgodnie z teorią metoda XAVIER wykazuje gorsze działanie w połączeniu z funkcją aktywacji ReLU.
+\item Metoda HE jest bardziej uniwersalna i poprawia wydajność w połączeniu z obiema funkcjami aktywacji.
+
+\end{itemize}
+
+\end{enumerate}
+
+\newpage
+
+\subsection{Najlepsze ustawienie i porównanie z wynikami ćwiczenia 2}
+\vspace{4mm}
+\begin{enumerate}
+
+\item[a)] Założenia
+
+\begin{itemize}
+\item liczba warstw ukrytych: [3], [1]
+\item liczba neuronów w warstwach ukrytych: [10], [20]
+\item funkcja aktywacji w warstwach ukrytych: [ReLU]
+\item inicjalizacja wag i biasów: [rozkład normalny]
+\item wielkość paczki (batch): [25]
+\item \textbf{metoda optymalizacji wag: [HE]}
+\item \textbf{metoda optymalizacji współczynnika uczenia: [ADADELTA]}
+\end{itemize}
+
+\item[b)] Otrzymane wyniki
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|>{\centering\arraybackslash}p{3cm}||>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{2cm}|}\hline
+ warstwy ukryte&\multicolumn{5}{c|}{średnia trafność klasyfikacji po iteracji}\\ \cline{2-6}
+ &I&II&III&IV&V\\ \hline
+ 3& 82.01\% & 86.59\% & 88.18\% & 88.53\% & 88.59\% \\ 
+ 1& 89.39\% & 91.01\% & 91.82\% & 92.27\% & 92.86\% \\ \hline
+\end{tabular}
+\caption{\label{tab:table3}Najlepsze ustawienie i porównanie z wynikami ćwiczenia 2}
+\end{table}
+
+\item[d)] Komentarz
+
+\begin{itemize}
+\item Jednoczesne użycie optymalizatora współczynnika uczenia i inicjalizacji wag poskutkowało najlepszymi rezultatami uczenia sieci MLP ze wszystkich testowanych konfiguracji aktualnego ćwiczenia oraz ćwiczenia poprzedniego.
+\item Udało się pokonać wszelkie inne ustawienia z zadania drugiego, gdzie najlepszy uzyskany wynik dla jednej warstwy wynosił 91.35\% skuteczności, a dla trzech warstw 82.02\%, a do tego udało się tego dokonać w znacznie mniejszej liczbie iteracji.
+\item \textbf{Najlepszy otrzymany wynik udało się osiągnąć z optymalizatorami ADADELTA i HE przy użyciu jednej warstwy ukrytej po 20 iteracjach i wyniósł on: 94.32\%.} 
+\item Warto jednak zauważyć, że sieć nie przestała się uczyć i mogła potencjalnie zwiększać dalej swoją skuteczność po kolejnych iteracjach uczenia.
+
+
+\end{itemize}
+
+\end{enumerate}
+
+\newpage
+
+\section{Podsumowanie}
+\vspace{4mm}
+
+Pomyślnie udało się zrealizować następujące wytyczne zadania:
+\begin{itemize}
+\item zaimplementowano pięć różnych metod optymalizacji współczynnika uczenia
+\item zaimplementowano dwa rodzaje metod inicjalizacji wag
+\item wykonano badania dyktowane w treści zadania oraz opracowano ciekawe wyniki dokumentujące zdobytą w zadaniu wiedzę
+\end{itemize}
+
+\vspace{4mm}
+Skuteczność i wydajność sieci MLP zależy od wartości wielu hiper-parametrów i parametrów. Z tego powodu konfiguracja sieci jest czasochłonna i trudna. Z pomocą przychodzi możliwość automatyzacji doboru niektórych z ustawień w postaci implementacji różnych optymalizatorów i metod. Ich użycie skraca i upraszcza znacznie proces strojenia sieci.\\
+
+Dodatkowo, bardziej zaawansowane metody pozwalają na automatyczną korekcję i adaptację parametrów w trakcie uczenia uwzględniając aktualne warunki procesu, co pozwala na uzyskiwanie jeszcze lepszych osiągów sieci.\\
+
+W wyniku procesu wykonywania zadania rozwinięto swoją wiedzę na temat elementarnych pojęć dotyczących sieci neuronowych oraz nauczono się kolejnych mechanizmów działania sieci MLP.\\
+
+
+\end{document}
